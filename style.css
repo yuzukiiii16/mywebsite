@@ -1,0 +1,114 @@
+/* --- 導覽列樣式 --- */
+.navbar-custom {
+    background-color:#494c48 ; /* ⭐️ 導覽列背景色 ⭐️ */
+}
+/* 選取導覽列中的「品牌名稱」和「導覽連結」 */
+.navbar-custom .navbar-brand,
+.navbar-custom .nav-link {
+    color: #ffffff; /* ❗ 導覽列文字顏色 ❗ */
+}
+
+/* --- 頁尾樣式 --- */
+.footer-custom {
+    background-color: #494c48; /* ⭐️ 頁尾背景色 ⭐️ */
+    color: #ffffff;           /* ❗ 頁尾文字顏色 ❗ */
+}
+
+.homeimage {
+    position: relative; /* 確保偽元素定位正確 */
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('image/bg.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed; /* --- 新增此屬性以產生滾動效果 --- */
+    color: white;
+    /* --- 調整 padding-top，將導覽列高度(56px)也算進去 --- */
+    padding: calc(8rem + 56px) 0 8rem 0;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.6);
+}
+
+
+.feature-icon {
+    font-size: 3rem;
+    color: #0d6efd;
+}
+
+/* --- 整體頁面佈局 (僅作用於 index.html) --- */
+#page-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* 設定最小高度為整個視窗高度 */
+}
+/* 讓 iframe 自動填滿剩餘空間 */
+#content-frame {
+  flex-grow: 1; /* 佔用所有可用的垂直空間 */
+  border: none;
+  width: 100%;
+  display: block;
+}
+
+
+/* --- prediction.html的樣式設定 --- */
+
+.content-section { padding: 4rem 0; }
+
+/* --- 模擬器區塊的樣式 --- */
+.simulator {
+    background-color: #e7e7e7; /* 背景色 */
+    border-radius: 15px;      /* 圓角 */
+    padding: 2rem;            /* 內邊距 */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* 陰影效果 */
+}
+
+/* --- 預測價格顯示的文字樣式 --- */
+#predicted-price {
+    font-size: 28px;   /* 字體大小 */
+    font-weight: bold;   /* 字體粗細 */
+    color: #0d6efd;      /* 字體顏色 */
+}
+
+/* --- 滑桿(Slider)樣式優化 --- */
+.slider-container {
+    display: flex;         /* 使用 Flexbox 佈局 */
+    align-items: center;   /* 垂直置中 */
+    gap: 1rem;             /* 元件間距 */
+}
+.form-range {
+    flex-grow: 1;
+    -webkit-appearance: none; /* 隱藏 WebKit 瀏覽器的原生滑桿樣式 */
+    appearance: none;         /* 隱藏標準的原生滑桿樣式 */
+    background-color: transparent; /* 隱藏原生軌道背景 */
+    cursor: pointer;          /* 鼠標樣式為指針 */
+}
+/* --- Chrome, Safari, Edge 瀏覽器的滑桿軌道樣式 --- */
+.form-range::-webkit-slider-runnable-track {
+    height: 6px;           /* 軌道高度 */
+    background: #dee2e6;   /* 軌道顏色 */
+    border-radius: 3px;    /* 軌道圓角 */
+}
+/* --- Firefox 瀏覽器的滑桿軌道樣式 --- */
+.form-range::-moz-range-track {
+    height: 6px;
+    background: #dee2e6;
+    border-radius: 3px;
+}
+
+/* --- 控制點 (Thumb) 樣式 --- */
+.form-range::-webkit-slider-thumb {
+    -webkit-appearance: none; /* 必須設置才能自訂樣式 */
+    margin-top: -5px; /* 垂直置中控制點 */
+}
+
+/* --- 拖曳時的互動效果 --- */
+.form-range:active::-webkit-slider-thumb {
+    transform: scale(1.2); /* 放大控制點 */
+    box-shadow: 0 0 10px rgba(13, 110, 253, 0.4); /* 增加陰影 */
+}
+.form-range:active::-moz-range-thumb {
+    box-shadow: 0 0 10px rgba(13, 110, 253, 0.4);
+}
+.range-label {
+    font-weight: 500;
+    color: #6c757d;
+    min-width: 25px; /* 給予數字標籤固定寬度，避免滑動時跳動 */
+    text-align: center;
+}

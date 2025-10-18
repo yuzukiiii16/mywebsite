@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>房價預測分析 - 紐約 Airbnb</title>
+    <!-- 引入 Bootstrap 5 的 CSS 樣式表，用於美化網頁介面 -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="style.css" rel="stylesheet">
+    <style>
+        body {
+            padding-top: 56px; /* 為了頂部固定的導航欄預留空間 */
+            background-color: #C1BCAC; /* ⭐️請更改整個網頁的背景顏色⭐️ */
+        }
+    </style>
+</head>
+<body>
+    <!-- 主要內容區塊 -->
+    <div class="container content-section pt-5">
+        <div class="text-center mb-5">
+            <h2>房價預測與互動模擬</h2>
+            <p class="lead">透過我們的分析，了解影響紐約房價的關鍵，並親手模擬您的理想房價！</p>
+        </div>
+
+        <!-- 互動模擬器區塊 -->
+        <div class="simulator mb-5">
+            <h3 class="text-center mb-4">房價模擬器</h3>
+            <div class="row">
+                <!-- 左半邊的控制項 -->
+                <div class="col-md-6">
+                    <!-- 臥室數量滑桿 -->
+                    <!-- mb-4：Bootstrap 間距工具，代表下方留白 1.5rem (24px 左右) -->
+                    <div class="mb-4">
+                        <!-- 1. label：滑桿的標籤文字。 
+                             2. for="bedrooms"：對應到下面滑桿的 id，<label> 和 id 會形成一個「配對關係」，這樣使用者點擊「臥室數量」這個文字的時候，瀏覽器就會自動把焦點移到對應的滑桿上。 
+                             3. class="form-label"：Bootstrap 的表單標籤樣式。-->
+                        <!-- 1. span：內嵌文字。 2. id="bedrooms-value"：讓 JS 可以找到這個數字並更新。 3. text-primary：藍色文字。  4. fw-bold：粗體字。 -->
+                        <label for="bedrooms" class="form-label">臥室數量: <span id="bedrooms-value" class="text-primary fw-bold">1</span></label>
+                        <!--包住滑桿和左右數字的容器，方便排版-->
+                        <div class="slider-container">
+                            <!--左邊的數字標籤，表示範圍的最小值與-->
+                            <span class="range-label">0</span>
+                            <!-- 
+                                1. type="range"：滑桿 
+                                2. class="form-range"：套用 Bootstrap 的滑桿樣式 
+                                3. id="bedrooms"：唯一名稱，給 <label> 和 JS 使用 
+                                4. min="0"：設定最小值 
+                                5. max="5"：設定最大值 
+                                6. value="1"：初始數字 
+                                7. oninput="updateValues()"：表示每次滑動這個滑桿，都會呼叫javascript中的 updateValues 函數來更新預測價格 
+                            -->
+                            <input type="range" class="form-range" id="bedrooms" min="0" max="5" value="1" oninput="updateValues()">
+                            <!--右邊的數字標籤，表示範圍的最大值-->
+                            <span class="range-label">5</span>
+                        </div>
+                    </div>
+                    <!-- 床位數量滑桿 -->
+                    <div class="mb-4">
+                        <label for="beds" class="form-label">床位數量: <span id="beds-value" class="text-primary fw-bold">1</span></label>
+                        <div class="slider-container">
+                            <span class="range-label">1</span>
+                            <input type="range" class="form-range" id="beds" min="1" max="10" value="1" oninput="updateValues()">
+                            <span class="range-label">10</span>
+                        </div>
+                    </div>
+                     <!-- 衛浴數量滑桿 -->
+                    <div class="mb-4">
+                        <label for="baths" class="form-label">衛浴數量: <span id="baths-value" class="text-primary fw-bold">1.0</span></label>
+                        <div class="slider-container">
+                             <span class="range-label">0</span>
+                            <input type="range" class="form-range" id="baths" min="0" max="5"  value="1" oninput="updateValues()">
+                             <span class="range-label">5</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 右半邊的控制項 -->
+                <div class="col-md-6">
+                    <!-- 預期評分滑桿 -->
+                     <div class="mb-4">
+                        <label for="rating" class="form-label">預期評分: <span id="rating-value" class="text-primary fw-bold">4.5</span></label>
+                         <div class="slider-container">
+                            <span class="range-label">3</span>
+                            <input type="range" class="form-range" id="rating" min="3" max="5" step="0.1" value="4.5" oninput="updateValues()">
+                            <span class="range-label">5</span>
+                        </div>
+                    </div>
+                    <!-- 行政區下拉選單 -->
+                    <!-- 外框：mb-3 代表下方留 1rem 間距 -->
+                    <div class="mb-3">
+                        <!-- 1. label：欄位名稱。 2. for 對應到 select 的 id -->
+                        <label for="neighbourhood_group" class="form-label">行政區</label>
+                        <!-- 1. class="form-select" ：Bootstrap 的下拉選單樣式
+                             2. id="neighbourhood_group"：唯一名稱，給 <label> 和 JS 使用 
+                             3. onchange="updateValues()" 表示每次變更選項，都會呼叫javascript中的 updateValues 函數 -->
+                        <select class="form-select" id="neighbourhood_group" onchange="updateValues()">
+                            <!-- 
+                                1. <option> ：下拉選單裡的一個「選項
+                                2. value：這裡的 value 不是類別名稱，而是從 Python 模型中得到的「One-Hot 編碼」後對應的係數
+                                          例如，選擇 Manhattan，在計算時就會直接加上 0.3369 這個值
+                                          這些係數代表了不同行政區相對於基準區對「對數價格」的影響程度
+                                3. selected：一打開網頁，這個選項會「先被選中」
+                            -->
+                            <option value="-0.1573">Bronx</option>
+                            <option value="0.0674">Brooklyn</option>
+                            <option value="0.3369" selected>Manhattan</option>
+                            <option value="-0.0938">Queens</option>
+                            <option value="-0.1532">Staten Island</option>
+                        </select>
+                    </div>
+                    <!-- 房型下拉選單 -->
+                    <div class="mb-3">
+                        <label for="room_type" class="form-label">房型</label>
+                        <select class="form-select" id="room_type" onchange="updateValues()">
+                            <!-- 同樣地，這裡的 value 是從 Python 模型得到的 One-Hot 編碼特徵的係數 -->
+                            <option value="0.2193" selected>Entire home/apt</option>
+                            <option value="0.2805">Hotel room</option>
+                            <option value="-0.2217">Private room</option>
+                            <option value="-0.2781">Shared room</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <!-- 價格顯示區 -->
+            <div class="text-center mt-4">
+                <h5>預測每晚價格</h5>
+                <!-- 預測價格會由 JavaScript 計算後填入這裡 -->
+                <p id="predicted-price">$0.00</p>
+                <small class="text-muted">*此為基於線性迴歸模型的簡化模擬結果，實際價格可能因其他因素變動。</small>
+            </div>
+        </div>
+
+        <!-- 靜態分析結果區塊 -->
+        <div >
+            <div>
+                <h4>模型預測結果解讀</h4>
+                <p>我們使用線性迴歸模型來預測房價，以下是關鍵的評估指標：</p>
+                <ul>
+                    <!-- 
+                        R² 和 RMSE 的值，都是從 Python 筆記本 `p_Linear_Regression.ipynb` 的模型評估結果中直接複製過來的靜態數據。
+                    -->
+                    <li>R² (判定係數): 0.4816 (這代表我們的模型能夠解釋約 48.2% 的房價變異)</li>
+                    <li>RMSE (均方根誤差): $94.84 (此數值表示模型的預測價格與實際價格平均相差約 95 美元，可作為您規劃預算時的參考。)</li>
+                </ul>
+            </div>
+            <div class="text-center">
+                <!-- 
+                    這張圖片 `lr.png` 是在 Python 筆記本中繪製「實際價格 vs. 預測價格散佈圖」後儲存下來的圖片。
+                    網頁直接引用這張靜態圖片來展示模型的預測效果。
+                -->
+                <img src="image/lr.png" class="img-fluid" alt="預測價格與實際價格散佈圖">
+            </div>
+        </div>
+    </div>
+
+    
+    <!-- JavaScript 程式碼區塊 -->
+    <script>
+        // 這個 `coefficients` 物件儲存了從 Python 線性迴歸模型訓練結果中得到的「截距」和各「數值特徵的係數」
+        // 這些數字是整個預測模型的核心
+        const coefficients = {
+            intercept: 2.9784,   // 截距 (Intercept)
+            bedrooms: 0.1491,    // 'bedrooms' 特徵的係數
+            beds: 0.1070,        // 'beds' 特徵的係數
+            baths: 0.0757,       // 'baths' 特徵的係數
+            rating: 0.2606,      // 'rating' 特徵的係數
+        };
+
+        // 這個函數負責更新滑桿旁邊顯示的數值，並呼叫 calculatePrice() 來重新計算價格。
+        function updateValues() {
+            // 從 HTML 元件中讀取使用者設定的值，並更新顯示在 label 上的文字
+                // textContent 用來設定或取得 HTML 元素裡的文字
+                // .value：代表「輸入框 / 下拉選單」裡的值
+                // parseFloat：把文字（字串）變成小數數字，因為從網頁 <input> 讀到的值都是字串，所以要轉換成「數字」才能計算
+                // toFixed(1)：把數字「固定到小數點後 1 位」，會自動四捨五入
+            document.getElementById('bedrooms-value').textContent = document.getElementById('bedrooms').value;
+            document.getElementById('beds-value').textContent = document.getElementById('beds').value;
+            document.getElementById('baths-value').textContent = parseFloat(document.getElementById('baths').value).toFixed(1);
+            document.getElementById('rating-value').textContent = parseFloat(document.getElementById('rating').value).toFixed(1);
+            
+            // 呼叫價格計算函數
+            calculatePrice();
+        }
+
+        // 這是模擬器的核心計算函數
+        function calculatePrice() {
+            // 從各個 HTML 輸入元件（滑桿、下拉選單）獲取使用者選擇的值
+            const bedrooms = parseFloat(document.getElementById('bedrooms').value);
+            const beds = parseFloat(document.getElementById('beds').value);
+            const baths = parseFloat(document.getElementById('baths').value);
+            const rating = parseFloat(document.getElementById('rating').value);
+            const neighbourhood_group = parseFloat(document.getElementById('neighbourhood_group').value);
+            const room_type = parseFloat(document.getElementById('room_type').value);
+
+            // 應用線性迴歸公式計算「對數價格 (log_price)」
+            // log_price = 截距 + 特徵1 × 特徵1的係數 + 特徵2 × 特徵2的係數 + ... + one-hot類別的係數 
+            // 注意：對於下拉選單，我們直接使用選項的 value (也就是係數本身)，因為它們代表的是 One-Hot 編碼後的虛擬變數
+            let log_price = coefficients.intercept +
+                            (bedrooms * coefficients.bedrooms) +
+                            (beds * coefficients.beds) +
+                            (baths * coefficients.baths) +
+                            (rating * coefficients.rating) +
+                            neighbourhood_group + // 直接加上該行政區的係數
+                            room_type;            // 直接加上該房型的係數
+            
+            // 3. 將預測出的「對數價格」還原成「實際價格」
+            // 因為 Python 模型預測的是 np.log(price)，所以這裡要用指數函數 Math.exp() 把它反轉回來。
+            const predicted_price = Math.exp(log_price);
+
+            // 4. 將計算出的價格格式化後，更新到網頁上顯示
+            document.getElementById('predicted-price').textContent = `$${predicted_price.toFixed(2)}`;
+        }
+
+        // 當網頁內容完全載入後，執行一次 `updateValues` 函數，以顯示初始的預測價格。
+        document.addEventListener('DOMContentLoaded', updateValues);
+    </script>
+    <!-- 引入 Bootstrap 的 JavaScript 功能 (必須放在 </body> 前) -->
+    <script src="js/bootstrap.bundle.min.js"></script>
+
+    <!-- 頁尾 -->
+    <footer class="py-4 footer-custom">
+        <div class="container text-center">
+            <!-- ⭐️ 請改成你們的班級和組別 ⭐️ -->
+            <small>Copyright © 新店高中OO班第O組 2025</small>
+        </div>
+    </footer>
+</body>
+</html>

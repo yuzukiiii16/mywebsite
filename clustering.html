@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Airbnb 房源風格推薦</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <style>
+        /* --- General Styling --- */
+        body {
+            padding-top: 56px; /* 為了頂部固定的導航欄預留空間 */
+            background-color: #C1BCAC; /* ⭐️請更改整個網頁的背景顏色⭐️ */
+        }
+
+        /* --- 頁尾樣式 --- */
+        .footer-custom {
+            background-color: #494c48; /* ⭐️ 頁尾背景色 ⭐️ */
+            color: #ffffff;           /* ❗ 頁尾文字顏色 ❗ */
+        }
+        
+        .hero-section {
+            background:  no-repeat center center;
+            background-size: cover;
+            padding: 100px 0;
+            transition: all 0.5s ease;
+        }
+
+        #quiz-section, #result-section {
+            animation: fadeIn 0.8s ease-in-out;
+        }
+
+        .quiz-question {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .quiz-question .form-check {
+            padding: 10px;
+            margin-left: 10px;
+        }
+
+        .quiz-question .form-check-label {
+            font-size: 1.1rem;
+        }
+
+        /* --- Result Card Styles --- */
+        .result-card {
+            border-width: 2px;
+            border-radius: 15px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .result-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .result-card-header {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #fff;
+            padding: 15px 20px;
+            border-top-left-radius: 13px;
+            border-top-right-radius: 13px;
+        }
+
+        .badge-custom {
+            font-size: 0.9rem;
+            padding: 0.5em 0.8em;
+        }
+
+        /* Cluster-specific colors */
+        .border-cluster-0 { border-color: #bfff00 !important; }
+        .header-cluster-0 { background-color: #bfff00; color: #333 !important; }
+
+        .border-cluster-1 { border-color: #00ffff !important; }
+        .header-cluster-1 { background-color: #00ffff; color: #333 !important; }
+
+        .border-cluster-2 { border-color: #8A2BE2 !important; }
+        .header-cluster-2 { background-color: #8A2BE2; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="hero-section  text-center">
+        <div class="container">
+            <h1 class="display-4 fw-bold">找不到理想的房間嗎？</h1>
+            <p class="lead my-3">回答三個簡單問題，讓我們為你找到最合適的 Airbnb 風格！</p>
+            <button id="start-quiz-btn" class="btn btn-primary btn-lg">開始測驗！</button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container my-5">
+
+        <!-- Quiz Section (Initially Hidden) -->
+        <section id="quiz-section" class="d-none">
+            <h2 class="text-center mb-5">告訴我們你的旅行偏好</h2>
+            <form id="quiz-form" class="col-lg-8 mx-auto">
+                <!-- Question 1 -->
+                <div class="quiz-question mb-4">
+                    <p class="lead fw-bold">1. 這次旅行，你最看重的是什麼？</p>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="q1" id="q1a" value="value" required>
+                        <label class="form-check-label" for="q1a">高 CP 值和真實的住客好評</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="q1" id="q1b" value="luxury">
+                        <label class="form-check-label" for="q1b">寬敞的空間和高品質的設施</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="q1" id="q1c" value="budget">
+                        <label class="form-check-label" for="q1c">用最少的預算解決住宿問題</label>
+                    </div>
+                </div>
+
+                <!-- Question 2 -->
+                <div class="quiz-question mb-4">
+                    <p class="lead fw-bold">2. 你和誰一起旅行？</p>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="q2" id="q2a" value="solo_couple" required>
+                        <label class="form-check-label" for="q2a">自己或和另一半 (1-2人)</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="q2" id="q2b" value="family_group">
+                        <label class="form-check-label" for="q2b">家人或一群朋友 (3人以上)</label>
+                    </div>
+                </div>
+
+                <!-- Question 3 -->
+                <div class="quiz-question mb-4">
+                    <p class="lead fw-bold">3. 你偏好哪種房東風格？</p>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="q3" id="q3a" value="personal" required>
+                        <label class="form-check-label" for="q3a">熱情好客、能提供在地建議的個人房東</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="q3" id="q3b" value="professional">
+                        <label class="form-check-label" for="q3b">專業管理、入住流程標準化的房東</label>
+                    </div>
+                     <div class="form-check">
+                        <input class="form-check-input" type="radio" name="q3" id="q3c" value="either">
+                        <label class="form-check-label" for="q3c">都可以，我不太與房東互動</label>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-5">
+                    <button type="submit" class="btn btn-success btn-lg">查看我的專屬推薦</button>
+                </div>
+            </form>
+        </section>
+
+        <!-- Result Section (Initially Hidden) -->
+        <section id="result-section" class="d-none">
+            <div id="result-display" class="mb-5">
+                <!-- Recommended profile will be injected here by JS -->
+            </div>
+
+            <!-- NEW: Retest Button -->
+            <div class="text-center mb-5">
+                <button id="retest-btn" class="btn btn-outline-primary btn-lg">重新測驗一次</button>
+            </div>
+
+            <h3 class="text-center mt-5 mb-4 border-top pt-5">其他房源風格參考</h3>
+            <div id="other-options-display" class="row">
+                <!-- Other profiles will be injected here by JS -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- 頁尾 -->
+    <footer class="py-4 footer-custom">
+        <div class="container text-center">
+            <!-- ⭐️ 請改成你們的班級和組別 ⭐️ -->
+            <small>Copyright © 新店高中OO班第O組 2025</small>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // --- DOM Elements ---
+            const startBtn = document.getElementById('start-quiz-btn');
+            const heroSection = document.querySelector('.hero-section');
+            const quizSection = document.getElementById('quiz-section');
+            const resultSection = document.getElementById('result-section');
+            const quizForm = document.getElementById('quiz-form');
+            const resultDisplay = document.getElementById('result-display');
+            const otherOptionsDisplay = document.getElementById('other-options-display');
+            const retestBtn = document.getElementById('retest-btn'); // NEW: Get the retest button
+
+            // --- Cluster Data ---
+            const clusterData = {
+                cluster0: {
+                    title: '高 CP 值人氣王',
+                    tag: '高CP值人氣房源',
+                    borderColor: 'border-cluster-0',
+                    headerColor: 'header-cluster-0',
+                    description: '你追求的是物超所值的體驗！這類房源價格合理，由用心經營的個人房東提供，因此擁有大量住客好評。非常適合希望深入體驗當地文化、同時兼顧預算和品質的你。',
+                    features: ['超高評價', '價格親民', '個人房東', '適合1-2人']
+                },
+                cluster1: {
+                    title: '豪華大空間房源',
+                    tag: '豪華/家庭式房源',
+                    borderColor: 'border-cluster-1',
+                    headerColor: 'header-cluster-1',
+                    description: '你和你的旅伴值得最好的！這類房源提供最寬敞的空間和最優質的設施，是家庭旅遊或團體出行的首選。雖然價格最高，但能給你帶來無與倫比的舒適與奢華體驗。',
+                    features: ['空間最大', '設施頂級', '適合家庭/團體', '價格較高']
+                },
+                cluster2: {
+                    title: '專業經濟型房源',
+                    tag: '專業經濟型房源',
+                    borderColor: 'border-cluster-2',
+                    headerColor: 'header-cluster-2',
+                    description: '對你來說，住宿是旅程的一部分，但不是全部。這類房源由專業團隊管理，提供標準化、乾淨且價格極具競爭力的住宿。雖然互動較少，但能讓你把預算花在更重要的地方。',
+                    features: ['價格最低', '專業管理', '入住便捷', '適合預算有限者']
+                }
+            };
+
+            // --- Event Listeners ---
+            startBtn.addEventListener('click', () => {
+                heroSection.classList.add('d-none');
+                quizSection.classList.remove('d-none');
+            });
+
+            quizForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const scores = calculateScores();
+                const bestMatch = determineBestMatch(scores);
+                displayResults(bestMatch);
+                quizSection.classList.add('d-none');
+                resultSection.classList.remove('d-none');
+                window.scrollTo(0, 0); // Scroll to top to see result
+            });
+
+            // NEW: Retest button event listener
+            retestBtn.addEventListener('click', () => {
+                resetQuiz();
+            });
+
+            // --- Functions ---
+            
+            // NEW: Function to reset the quiz state
+            function resetQuiz() {
+                // Hide results section and show quiz section
+                resultSection.classList.add('d-none');
+                quizSection.classList.remove('d-none');
+
+                // Reset the form fields to clear previous selections
+                quizForm.reset();
+
+                // Scroll to the top of the quiz for a better user experience
+                quizSection.scrollIntoView({ behavior: 'smooth' });
+            }
+
+            function calculateScores() {
+                const scores = { cluster0: 0, cluster1: 0, cluster2: 0 };
+                const formData = new FormData(quizForm);
+
+                // Q1 Logic: Priority
+                const q1 = formData.get('q1');
+                if (q1 === 'value') scores.cluster0 += 2;
+                if (q1 === 'luxury') scores.cluster1 += 2;
+                if (q1 === 'budget') scores.cluster2 += 2;
+
+                // Q2 Logic: Group Size
+                const q2 = formData.get('q2');
+                if (q2 === 'solo_couple') {
+                    scores.cluster0 += 1;
+                    scores.cluster2 += 1;
+                }
+                if (q2 === 'family_group') scores.cluster1 += 2;
+
+                // Q3 Logic: Host Style
+                const q3 = formData.get('q3');
+                if (q3 === 'personal') scores.cluster0 += 2;
+                if (q3 === 'professional') scores.cluster2 += 2;
+                if (q3 === 'either') {
+                    scores.cluster1 += 1;
+                    scores.cluster2 += 1;
+                }
+                
+                return scores;
+            }
+
+            function determineBestMatch(scores) {
+                return Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
+            }
+
+            function displayResults(bestMatch) {
+                // Clear previous results
+                resultDisplay.innerHTML = '';
+                otherOptionsDisplay.innerHTML = '';
+
+                // Display best match
+                resultDisplay.innerHTML = createCardHTML(clusterData[bestMatch], true);
+                
+                // Display other options
+                for (const clusterKey in clusterData) {
+                    if (clusterKey !== bestMatch) {
+                        const cardHTML = createCardHTML(clusterData[clusterKey], false);
+                        const col = document.createElement('div');
+                        col.className = 'col-md-6 mb-4';
+                        col.innerHTML = cardHTML;
+                        otherOptionsDisplay.appendChild(col);
+                    }
+                }
+            }
+
+            function createCardHTML(data, isBestMatch) {
+                const featuresHTML = data.features.map(feature => 
+                    `<span class="badge rounded-pill bg-light text-dark me-2 mb-2 p-2">${feature}</span>`
+                ).join('');
+                
+                const mainCardClass = isBestMatch ? 'col-lg-10 mx-auto' : '';
+
+                return `
+                    <div class="${mainCardClass}">
+                        <div class="card h-100 shadow-sm result-card ${data.borderColor}">
+                            <div class="card-header ${data.headerColor} text-center result-card-header">
+                                ${data.title}
+                            </div>
+                            <div class="card-body p-4">
+                                <h5 class="card-title text-muted mb-3">${data.tag}</h5>
+                                <p class="card-text">${data.description}</p>
+                                <hr>
+                                <h6 class="fw-bold">主要特色：</h6>
+                                <div>${featuresHTML}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        });
+    </script>
+
+</body>
+</html>
