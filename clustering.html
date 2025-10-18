@@ -14,15 +14,30 @@
     <!-- Custom CSS -->
     <style>
         /* --- General Styling --- */
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+
         body {
             padding-top: 56px; /* 為了頂部固定的導航欄預留空間 */
             background-color: #C1BCAC; /* ⭐️請更改整個網頁的背景顏色⭐️ */
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh; /* 讓頁面最少等於視窗高度 */
+        }
+
+        main {
+            flex: 1; /* 主內容撐開中間空間 */
         }
 
         /* --- 頁尾樣式 --- */
         .footer-custom {
-            background-color: #494c48; /* ⭐️ 頁尾背景色 ⭐️ */
-            color: #ffffff;           /* ❗ 頁尾文字顏色 ❗ */
+            background-color: #494c48;
+            color: #ffffff;
+            text-align: center;
+            padding: 1rem 0;
+            margin-top: auto; /* ✨關鍵：讓 footer 自動貼到底部 */
         }
         
         .hero-section {
